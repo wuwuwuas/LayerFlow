@@ -1,0 +1,6 @@
+# Additional dependencies for traditional baselines and external neural models.
+# Install requirements.txt first. Do not install a second OpenCV wheel.
+timm==1.0.28
+einops>=0.6,<0.9
+scikit-image>=0.23,<0.27
+torchvision>=0.16,<1
