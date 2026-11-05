@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """Evaluate GOES traditional optical-flow products using existing PCF caches.
 
 No ERA5 interpolation is performed.  For each satellite/geometry combination,

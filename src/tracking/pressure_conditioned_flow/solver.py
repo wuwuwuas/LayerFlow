@@ -171,11 +171,6 @@ def _accumulate_native_profile(
 
 class PressureConditionedFlowSolver:
     """Level-major pressure-conditioned solver using the masked OpenCV 4.13 fork.
-
-    This implementation intentionally retains the exact state-image and
-    normalized masked-pyramid construction that produced the validated reference.
-    Only the inner variational implementation changes from the Torch reference
-    to the editable OpenCV 4.13 masked fork.
     """
 
     def __init__(

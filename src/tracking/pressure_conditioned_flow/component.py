@@ -41,10 +41,6 @@ def run_pressure_conditioned_component(
     ),
 ) -> tuple[FlowResult, np.ndarray, dict[str, Any]]:
     """Run one component through the pressure-conditioned masked OpenCV VR kernel.
-
-    This implementation deliberately retains the exact layer-image formula,
-    normalization, membership generation, output mask, and merge logic used by
-    the validated reference. It isolates only the inner-kernel replacement.
     """
 
     image0 = np.asarray(image0, dtype=np.float32)
@@ -390,7 +386,7 @@ def run_pressure_conditioned_component(
 
 # -----------------------------------------------------------------------------
 # Shared-source, sequential-state execution used by centre-anchored GOES PCF.
-# The legacy single-pair function above remains unchanged for SEVIRI.
+# Process temporal pairs sequentially and reuse identical source pyramids.
 # -----------------------------------------------------------------------------
 
 
@@ -466,7 +462,7 @@ def _update_merge_accumulator(
         accumulator["dy"][direct] = dy[direct]
         accumulator["valid"][direct] = True
 
-        # Retain only the nearest valid state candidate for the legacy hard
+        # Retain only the nearest valid state candidate for the hard
         # fallback.  This replaces storage of all full-resolution state flows.
         from preprocessing.layerwise_image import layer_distance_hpa
 

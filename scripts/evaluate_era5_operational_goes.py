@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Evaluate official G16/G18 Band-14 DMW against split-region ERA5.
 
 The two viewpoints are reported separately.  The script uses the common

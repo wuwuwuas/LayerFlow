@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """Run FlowDiffuser on GOES ABI C14 pressure-layer images.
 
 GOES counterpart of ``scripts/run_neural_baselines_seviri_layered.py``.  The pressure

@@ -1,6 +1,6 @@
 """Pressure assignment for PIV-AMV products.
 
-Pressure assignment is treated as a post-processing experiment:
+Pressure sources:
 - OCA pressure: dense component-start pressure grids assigned to C1/C2/C3.
   Dense pixel-level PIV uses same-pixel indexing; sparse/coarse PIV uses a
   small local window statistic, median by default.  Component pressures are
@@ -10,9 +10,7 @@ Pressure assignment is treated as a post-processing experiment:
   space, mean by default.  The output keeps official lon/lat and official
   pressure, but replaces official wind with the local PIV wind aggregate.
 
-Outputs are compact 1-D products: points without assigned pressure are not
-written.  No QC score, ERA5 comparison, or downstream validation is created
-here.
+Outputs are compact 1-D products containing vectors with valid pressure.
 """
 
 from __future__ import annotations

@@ -1,9 +1,4 @@
-"""Reusable vector-wind comparison metrics.
-
-This module intentionally keeps the reported metric set compact.  The AMV
-validation tables should focus on common error diagnostics rather than broad
-summary statistics such as mean AMV/reference wind speed.
-"""
+"""Vector-wind error metrics for AMV validation."""
 
 from __future__ import annotations
 

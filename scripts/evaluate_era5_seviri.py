@@ -1,10 +1,8 @@
 
 import os
-# -*- coding: utf-8 -*-
 
 # Evaluate SEVIRI winds against ERA5
 
-# Cell structure is preserved with VS Code-compatible # %% markers.
 
 
 try:
@@ -65,13 +63,7 @@ print("SRC_DIR:", SRC_DIR)
 # ---------------------------------------------------------------------
 # Case settings
 # ---------------------------------------------------------------------
-# This script is now case-directory driven:
-#   - official AMV is discovered under DATA_CASE_DIR/eumetsat_amv/native
-#   - ERA5 is discovered under DATA_CASE_DIR/era5
-#   - AMV_VALID_TIME is inferred from DATA_CASE_DIR + AMV_VALID_OFFSET_MINUTES
-#
-# When switching case, normally only these two lines need to be changed.
-# CASE_NAME = "test_2018-12-01T01"
+# Reuse observation paths and times saved by the retrieval.
 CASE_NAME = os.environ.get("AMV_CASE", "test_2018-01-12T11")
 from runtime_options import read_case_inputs
 CASE_INPUTS = read_case_inputs(PROJECT_ROOT, CASE_NAME)
@@ -119,7 +111,7 @@ OFFICIAL_AMV_FILE = find_official_amv_file(
     OFFICIAL_AMV_NATIVE_DIR,
     expected_time=AMV_VALID_TIME.to_pydatetime(),
     tolerance_minutes=90.0,
-)
+) if any(OFFICIAL_AMV_NATIVE_DIR.rglob("*.nc")) else None
 
 ERA5_FILE = find_era5_file(
     ERA5_DIR,
@@ -158,7 +150,7 @@ SAVE_COMPRESSED_NPZ = False
 ERA5_CHUNK_SIZE = 50_000
 
 # Run controls.
-RUN_OFFICIAL_AMV = True
+RUN_OFFICIAL_AMV = OFFICIAL_AMV_FILE is not None
 RUN_OCA_PRESSURE_PRODUCTS = True
 RUN_OFFICIAL_PRESSURE_PRODUCTS = False  # Use cloud-product pressure for evaluation.
 SAVE_FIGURES = False  # Result visualization uses dedicated plot_* scripts.
@@ -168,7 +160,7 @@ print("DATA_CASE_DIR:", DATA_CASE_DIR)
 print("CASE_START_TIME:", CASE_START_TIME)
 print("AMV_VALID_TIME:", AMV_VALID_TIME)
 print("OFFICIAL_AMV_NATIVE_DIR:", OFFICIAL_AMV_NATIVE_DIR)
-print("OFFICIAL_AMV_FILE:", OFFICIAL_AMV_FILE, OFFICIAL_AMV_FILE.exists())
+print("OFFICIAL_AMV_FILE:", OFFICIAL_AMV_FILE)
 print("ERA5_DIR:", ERA5_DIR)
 print("ERA5_FILE:", ERA5_FILE, ERA5_FILE.exists())
 print("PRESSURE_ASSIGNMENT_DIR:", PRESSURE_ASSIGNMENT_DIR)
@@ -186,11 +178,11 @@ for spec in OFFICIAL_PRODUCT_SPECS:
 # %%
 # 2. Inspect time-like variables in the raw official AMV file
 
-if OFFICIAL_AMV_FILE.exists():
+if RUN_OFFICIAL_AMV:
     time_variables = inspect_official_time_variables(OFFICIAL_AMV_FILE)
     display(time_variables)
 else:
-    print("Official AMV file not found; please update OFFICIAL_AMV_FILE.")
+    print("Evaluating retrieved AMVs; no operational AMV input selected.")
 
 
 # %%
@@ -216,40 +208,37 @@ else:
 
 if not ERA5_FILE.exists():
     raise FileNotFoundError(f"ERA5 file not found: {ERA5_FILE}")
-if not OFFICIAL_AMV_FILE.exists():
-    raise FileNotFoundError(f"Official AMV file not found: {OFFICIAL_AMV_FILE}")
-
 # xarray keeps data lazy until interpolation chunks are requested.
 era5_ds = xr.open_dataset(ERA5_FILE)
 print("ERA5 dataset:")
 print(era5_ds)
 
-official_config = {"official_amv_file": OFFICIAL_AMV_FILE}
-official = load_official_amv(official_config)
-print("Official AMV rows:", len(official.frame))
-display(official.frame.head())
+official = None
+if RUN_OFFICIAL_AMV:
+    official_config = {"official_amv_file": OFFICIAL_AMV_FILE}
+    official = load_official_amv(official_config)
+    print("Official AMV rows:", len(official.frame))
+    display(official.frame.head())
 
 
 # %%
 # 5. Build or reuse ERA5 collocation caches
 
 # 5a. Official-AMV geometry cache.
-t0 = time.perf_counter()
-ensure_official_era5_cache(
-    official_amv=official,
-    era5=era5_ds,
-    cache_path=OFFICIAL_ERA5_CACHE,
-    valid_time=AMV_VALID_TIME,
-    chunk_size=ERA5_CHUNK_SIZE,
-    rebuild=REBUILD_OFFICIAL_ERA5_CACHE,
-    compress=SAVE_COMPRESSED_NPZ,
-)
-print(f"Official ERA5 cache ready in {time.perf_counter() - t0:.1f} s")
+if RUN_OFFICIAL_AMV:
+    t0 = time.perf_counter()
+    ensure_official_era5_cache(
+        official_amv=official,
+        era5=era5_ds,
+        cache_path=OFFICIAL_ERA5_CACHE,
+        valid_time=AMV_VALID_TIME,
+        chunk_size=ERA5_CHUNK_SIZE,
+        rebuild=REBUILD_OFFICIAL_ERA5_CACHE,
+        compress=SAVE_COMPRESSED_NPZ,
+    )
+    print(f"Official ERA5 cache ready in {time.perf_counter() - t0:.1f} s")
 
-# 5b. OCA-P PIV geometry union cache.
-# Standard and extra OCA products are both handled here. The hybrid product
-# normally shares the same row/col/pressure geometry, so this should only update
-# a coverage column and should not require expensive new interpolation.
+# 5b. Reuse row/column/pressure collocations across OCA-pressure products.
 if RUN_OCA_PRESSURE_PRODUCTS:
     first_existing = True
     for spec in OCA_PRODUCT_SPECS:

@@ -1,13 +1,7 @@
-"""Run pressure-layerwise PIV / optical-flow trackers.
+"""Run pressure-layer optical-flow baselines on SEVIRI image/OCA pairs.
 
-This script only runs tracking. It reads four original SEVIRI frames and four
-independent original OCA pressure grids, builds pressure-layer images, runs
-normal tracker functions on each layer, merges layer flows, then saves the usual
-PIV-native NPZ.
-
-It does not perform OCA pressure assignment, QC, ERA5 comparison, IGRA
-comparison, or TTO/refinement.
-"""
+Construct conditioned images for each pressure layer, estimate and merge
+layer flows, and save dense native wind products."""
 
 from __future__ import annotations
 
@@ -39,9 +33,7 @@ SAVE_COMPONENT_NPZ = False
 #   source_shared : C1 P0/P0, C2 P1/P1, C3 P2/P2
 #   target_shared : C1 P1/P1, C2 P2/P2, C3 P3/P3
 #
-# The source-shared mode explicitly reproduces the earlier source-pressure
-# behavior without pretending that P3 is missing. All four original OCA frames
-# are still loaded and validated.
+# All modes load four OCA frames; this setting controls component pairing.
 PRESSURE_PAIR_MODE = "independent"  # Pressure-conditioned baseline.
 
 # Non-independent modes receive an output-name suffix so existing independent
@@ -52,7 +44,7 @@ PRESSURE_PAIR_TRACKER_SUFFIX = {
     "target_shared": "_target_pressure",
 }
 
-# Backend switches for self-written replacements.
+
 # backend = implementation source; device = where torch-capable implementations run.
 
 TRACKER_COMPONENT_PAIRS = [(0, 1), (1, 2), (2, 3)]

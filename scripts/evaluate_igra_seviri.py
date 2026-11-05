@@ -1,16 +1,7 @@
-# -*- coding: utf-8 -*-
-"""Fast AMV-vs-IGRA comparison.
+"""Collocate SEVIRI AMVs with IGRA radiosondes and report wind metrics.
 
-This script is a compact py-version of the AMV-IGRA comparison notebook.
-It only computes collocations/metrics and saves ERA5-style 4-panel figures.
-
-Key changes compared with the older notebook:
-- case time is inferred from DATA_CASE_DIR;
-- IGRA raw archives are read from the global cache: data/igra;
-- official AMV file is auto-discovered from the case data directory;
-- point-level IGRA geometry caches are reused across trackers;
-- all-points and QC metrics share the same geometry cache.
-"""
+Read station archives from data/igra and reuse point-level collocation
+geometry across trackers and QI thresholds."""
 
 from __future__ import annotations
 

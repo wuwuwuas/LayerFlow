@@ -1,15 +1,6 @@
-"""GOES adapters for split-region ERA5 validation.
+"""Collocate GOES AMVs with regional ERA5 files and compute wind metrics.
 
-All interpolation and metrics are delegated to the existing validation stack:
-
-* ``validation.compare_era5.collocate_era5_to_points``
-* ``validation.compare_era5.compare_to_era5``
-* ``validation.metrics.summary_metrics``
-
-This module only discovers/routs the two downloaded ERA5 regions and adds GOES
-subsets.  It supports either one shared centre time (PCF) or one observation
-time per point (official DMW).
-"""
+Use a shared centre time for LayerFlow or per-point times for operational DMW."""
 
 from __future__ import annotations
 

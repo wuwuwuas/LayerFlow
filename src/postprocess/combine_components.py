@@ -1,12 +1,6 @@
-"""Combine adjacent PIV / optical-flow wind components into one native PIV file.
+"""Average valid temporal wind components into a dense native product.
 
-This module is intentionally PIV-only:
-- no pressure / height assignment
-- no OCA / cloud fields
-- no QC diagnostics
-- final u/v is the mean of valid C1/C2/C3 u/v values
-- component u/v, valid masks, and dx/dy can be kept in the same output file
-"""
+Retain component winds, validity masks and pixel displacements in the output."""
 
 from __future__ import annotations
 

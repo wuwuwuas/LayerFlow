@@ -1,8 +1,6 @@
 """Export forecast-independent GOES C14 QI from an NNJA GDAS BUFR dump.
 
-The upstream NVIDIA BUFR table helper is supplied by the user, not vendored.
-See README for the upstream URL and optional decoding dependencies.
-"""
+See README for the NVIDIA BUFR helper and decoding dependencies."""
 from __future__ import annotations
 
 import argparse

@@ -149,7 +149,7 @@ def _find_private_install(
             if resolved is not None:
                 return resolved
 
-    # Backward-compatible upward search from the module itself.
+    # Search parent directories for a native installation.
     for candidate in (start, *start.parents):
         for relative in (
             Path("_third_party/opencv_install_pressure_conditioned_flow"),
@@ -189,7 +189,7 @@ def _find_library(lib_dir: Path, stem: str) -> Path:
 
 
 class NativePressureConditionedVR:
-    """ctypes wrapper around the validated masked VariationalRefinement fork."""
+    """ctypes interface to masked variational refinement."""
 
     def __init__(
         self,

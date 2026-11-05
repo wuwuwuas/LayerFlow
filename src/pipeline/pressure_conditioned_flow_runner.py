@@ -1,13 +1,7 @@
-"""Case runner for pressure-conditioned dense AMV estimation.
+"""Retrieve SEVIRI pressure-conditioned AMVs.
 
-This pipeline keeps the standard project contracts:
-
-1. run C1/C2/C3 and save the usual dense PIV-native NPZ;
-2. assign original OCA component-start pressure grids and save the usual compact
-   pressure-assigned AMV NPZ.
-
-QC, ERA5 comparison and IGRA comparison remain separate downstream steps.
-"""
+Estimate C1/C2/C3, convert pixel displacements to wind, combine valid
+components, and save dense native and compact OCA-pressure-assigned products."""
 
 from __future__ import annotations
 

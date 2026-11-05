@@ -70,6 +70,9 @@ def save_case_inputs(settings: MutableMapping[str, Any], *, sensor: str) -> None
         "interval_minutes": settings.get("FRAME_INTERVAL_MINUTES"),
         "aoi": settings.get("AOI"),
     }
+    if sensor == "goes":
+        record["satellites"] = list(settings["SATELLITES"])
+        record["geometry_modes"] = list(settings["GEOMETRY_MODES"])
     out = settings["OUTPUT_DIR"]
     out.mkdir(parents=True, exist_ok=True)
     (out / "run_inputs.json").write_text(json.dumps(record, indent=2), encoding="utf-8")

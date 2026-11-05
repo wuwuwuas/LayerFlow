@@ -1,9 +1,4 @@
-"""Small helpers for dense optical-flow tracker adapters.
-
-The real algorithms either live in OpenCV/scikit-image or under ``piv/``.
-The ``tracking`` package only converts their outputs into the common
-``FlowResult`` interface used by ``pipeline.tracker_runner``.
-"""
+"""Input normalization and FlowResult helpers for dense optical-flow adapters."""
 
 from __future__ import annotations
 

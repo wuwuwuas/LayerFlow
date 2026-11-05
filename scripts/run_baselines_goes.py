@@ -1,18 +1,8 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""Run existing traditional dense optical-flow trackers on GOES ABI C14.
+"""Run traditional dense optical-flow baselines on GOES ABI C14.
 
-This is a formal migration of the established tracker adapters, not a new
-algorithm.  Each tracker uses the same centre-anchored temporal definition as
-GOES PCF:
-
-* C1: centre -> previous, signed dt < 0
-* C2: centre -> next, signed dt > 0
-* final: vector mean of C1/C2, both required
-
-The default output uses centre-CTH geometry only because the surface and
-cloud-height GOES results were already shown to be nearly identical.
-"""
+Estimate centre-to-previous flow with a negative time interval and
+centre-to-next flow with a positive interval. The final wind is the mean of
+both components, using centre-cloud-height-corrected geometry."""
 
 from __future__ import annotations
 
@@ -49,8 +39,7 @@ SAVE_DIAGNOSTIC_FIGURES = False
 QUICKLOOK_MAXIMUM_DIMENSION = 1200
 SKIP_EXISTING_FINAL = False
 
-# Same traditional method set as the SEVIRI Table I.  Comment individual names
-# when a shorter screening run is desired.
+# Select the baseline methods to run.
 TRACKERS_TO_RUN = ['raw_farneback_opencv', 'raw_deepflow_opencv', 'raw_dis', 'raw_tvl1', 'raw_dualtvl1', 'raw_ilk', 'raw_pcaflow']
 
 
@@ -74,7 +63,7 @@ from tracking import run_deepflow, run_dis, run_dualtvl1, run_farneback, run_ilk
 
 
 # -----------------------------------------------------------------------------
-# Existing tracker configurations; no GOES-specific algorithm modification
+# Tracker configurations
 # -----------------------------------------------------------------------------
 
 TRACKER_CONFIGS = {'raw_farneback_opencv': (run_farneback, {'backend': 'opencv', 'pyr_scale': 0.5, 'levels': 3, 'winsize': 25, 'iterations': 3, 'poly_n': 7, 'poly_sigma': 1.1, 'flags': 0}), 'raw_dis': (run_dis, {'preset': 'medium'}), 'raw_deepflow_opencv': (run_deepflow, {'backend': 'opencv', 'alpha': 1.0, 'delta': 0.5, 'gamma': 5.0, 'sigma': 0.6, 'min_size': 25, 'downscale_factor': 0.95, 'fixed_point_iterations': 5, 'sor_iterations': 25, 'omega': 1.6, 'input_dtype': 'uint8_0_255', 'verbose': False}), 'raw_tvl1': (run_tvl1, {'attachment': 15.0, 'tightness': 0.3, 'num_warp': 5, 'num_iter': 10, 'tol': 0.0001, 'prefilter': False}), 'raw_ilk': (run_ilk, {'radius': 11, 'num_warp': 5, 'gaussian': True, 'prefilter': True}), 'raw_pcaflow': (run_pcaflow, {}), 'raw_dualtvl1': (run_dualtvl1, {'lambda': 0.1, 'theta': 0.3, 'nscales': 5, 'warps': 5, 'epsilon': 0.01, 'medianFiltering': 5})}

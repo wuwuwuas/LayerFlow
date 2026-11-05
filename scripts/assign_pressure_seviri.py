@@ -1,32 +1,7 @@
-# -*- coding: utf-8 -*-
-"""Pressure assignment for PIV-AMV products.
+"""Assign pressure to SEVIRI baseline wind products.
 
-This script assigns pressure to clean stacked PIV/OF wind products.
-
-It does not run PIV tracking, QC, ERA5 comparison, or CSV export. It only
-creates compact pressure-assigned AMV NPZ files.
-
-Supported products
-------------------
-- PIV-AMV + OCA component-start pressure grids
-- PIV-AMV + official AMV sparse pressure points
-
-Path discovery
---------------
-The script no longer hard-codes individual OCA / official-AMV NetCDF file
-names. You only need to set:
-
-    CASE_NAME
-    DATA_CASE_DIR
-
-Then files are discovered from:
-
-    DATA_CASE_DIR/eumetsat_oca/native/**/*.nc
-    DATA_CASE_DIR/eumetsat_amv/native/**/*.nc
-
-Requires:
-    src/data_io/product_discovery.py
-"""
+Discover OCA component-start grids or operational AMV pressure points under
+DATA_CASE_DIR and save compact pressure-assigned AMV NPZ files."""
 
 from __future__ import annotations
 

@@ -1,16 +1,7 @@
-"""Core PIV / optical-flow tracker workflow for notebooks and scripts.
+"""Run optical-flow trackers and save dense native wind products.
 
-One-file PIV-native workflow:
-tracker -> flow_to_wind -> combine C1/C2/C3 u/v -> save final native NPZ.
-
-This runner is intentionally PIV-only:
-- no OCA / cloud-top-pressure assignment
-- no height assignment
-- no QC or diagnostic score calculation
-- no CSV preview files
-- component NPZ files are optional; by default all component u/v and dx/dy are
-  stored in the final native NPZ.
-"""
+Convert pixel flow to wind, average valid temporal components, and retain
+component winds, displacements and masks in the final NPZ file."""
 
 from __future__ import annotations
 

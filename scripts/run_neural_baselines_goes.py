@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """Run FlowDiffuser on original (non-layered) GOES ABI C14 images.
 
 GOES counterpart of ``scripts/run_neural_baselines_seviri.py``.  The model, checkpoint

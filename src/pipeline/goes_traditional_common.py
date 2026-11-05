@@ -1,17 +1,7 @@
-"""Shared GOES helpers for migrated traditional optical-flow trackers.
+"""Shared geometry and product helpers for GOES optical-flow baselines.
 
-This module contains no optical-flow algorithm.  It standardises the existing
-traditional trackers to the same GOES product semantics used by the PCF
-pipeline:
-
-* C1 is centre -> previous and keeps a negative time interval;
-* C2 is centre -> next and keeps a positive time interval;
-* both flows are defined on the common centre/source grid;
-* final output validity is determined by the centre GOES products;
-* previous/next product validity is not applied as a post-hoc destination
-  filter;
-* the same pixel flow can be converted with surface or centre-CTH geometry.
-"""
+Use centre-to-previous and centre-to-next components with signed time
+intervals, centre-grid output masks, and surface or cloud-height geometry."""
 
 from __future__ import annotations
 

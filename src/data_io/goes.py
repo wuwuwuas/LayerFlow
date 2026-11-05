@@ -3,10 +3,7 @@
 The downloader stores a resolved paired case under ``data/<case_name>`` and
 writes ``manifests/goes_selected_products.csv``.  This module treats that
 manifest as the authoritative mapping between temporal roles and local files.
-It does not contact NOAA S3 and is therefore suitable for the offline server.
-
-The first-stage reader standardises the four core fields used by the PCF
-experiment:
+The reader standardises four fields:
 
 * ABI Band-14 Cloud and Moisture Imagery brightness temperature -> kelvin
 * ABI Cloud Top Height -> metres

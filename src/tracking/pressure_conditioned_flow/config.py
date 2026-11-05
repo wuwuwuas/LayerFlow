@@ -13,11 +13,9 @@ from preprocessing.layerwise_image import LayerwiseImageConfig, PressureLayer
 
 @dataclass
 class PressureConditionedFlowConfig:
-    """Parameters of the validated pressure-conditioned solver.
+    """Parameters of the pressure-conditioned solver.
 
-    The numerical defaults reproduce the legacy
-    ``pressure_state_opencv_masked_v1`` implementation. ``native_install_dir``
-    may point either to the private OpenCV installation root or directly to its
+    ``native_install_dir`` may point to the OpenCV installation root or its
     ``lib``/``lib64`` directory. When it is ``None``, the native loader searches
     the environment and repository-local default locations.
     """
@@ -36,7 +34,7 @@ class PressureConditionedFlowConfig:
     max_pyramid_levels: int | None = None
     interpolation: int = cv2.INTER_LINEAR
 
-    # Exact validated masked-pyramid construction.
+    # Masked-pyramid construction.
     input_dtype: str = "uint8_0_255"
     solver_active_threshold: float = 0.01
     normalized_blur_epsilon: float = 1.0e-4
@@ -62,7 +60,7 @@ class PressureConditionedFlowConfig:
 
 
 def default_pressure_layer_config() -> LayerwiseImageConfig:
-    """Return the four pressure states used by the validated baseline."""
+    """Return the default four pressure states."""
 
     return LayerwiseImageConfig(
         mode="hard_soft_boundary",

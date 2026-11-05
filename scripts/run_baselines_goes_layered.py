@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """Run existing traditional trackers on GOES pressure-layer C14 images.
 
 Pressure boundaries are configured here and passed into the generic runner.

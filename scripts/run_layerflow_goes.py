@@ -1,18 +1,8 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""Run the validated PCF algorithm on GOES ABI C14.
+"""Retrieve LayerFlow AMVs from GOES ABI C14 observations.
 
-For each satellite:
-
-* C1: centre -> previous (signed dt < 0)
-* C2: centre -> next     (signed dt > 0)
-
-Both dense components are defined on the centre grid and both are required.
-The same pixel flows are converted twice without rerunning PCF:
-
-* surface geometry: nominal reference ellipsoid;
-* cloud-height geometry: centre CTH parallax correction.
-"""
+For each satellite, estimate centre-to-previous and centre-to-next flow,
+combine both components, and save pressure-assigned AMVs with surface and
+cloud-height-corrected geometry."""
 
 from __future__ import annotations
 
@@ -50,9 +40,8 @@ SAVE_DIAGNOSTIC_FIGURES = False
 PRIVATE_OPENCV_INSTALL_DIR = None
 PRIVATE_OPENCV_THREADS = None
 
-# Exact source-pyramid reuse only. If pair-wise normalization makes the centre
-# source image differ between backward and forward components, the runner
-# preserves the established numerical definition and rebuilds that source.
+# Reuse a source pyramid when the normalized centre image is identical
+# for both temporal components.
 SOURCE_PYRAMID_REUSE_POLICY = "exact"
 
 
@@ -82,13 +71,11 @@ from tracking.pressure_conditioned_flow import (  # noqa: E402
 
 
 # -----------------------------------------------------------------------------
-# Validated PCF configuration retained from the Ubuntu SEVIRI baseline
+# Solver and pressure-layer configuration
 # -----------------------------------------------------------------------------
 
 # -----------------------------------------------------------------------------
-# Pressure-conditioned states: experiment configuration belongs in this script.
-# The tracking implementation receives this object and contains no GOES-specific
-# pressure-boundary choice.
+# Pressure intervals and soft boundary weights.
 # -----------------------------------------------------------------------------
 
 PRESSURE_LAYERS = (

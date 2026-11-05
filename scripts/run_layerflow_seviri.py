@@ -1,15 +1,7 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""Run the validated pressure-conditioned dense AMV baseline.
+"""Retrieve LayerFlow AMVs from four SEVIRI image/OCA pairs.
 
-This example performs both stages required by downstream processing:
-
-1. saves the standard dense PIV-native product;
-2. saves the standard compact OCA-pressure AMV product.
-
-QC, ERA5 comparison and IGRA comparison are intentionally left to the existing
-common scripts.
-"""
+Estimate the three adjacent temporal components, convert flow to wind, and
+save dense native and compact OCA-pressure-assigned AMV products."""
 
 from __future__ import annotations
 
@@ -29,8 +21,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 CASE_NAME = os.environ.get("AMV_CASE", "test_2018-01-12T11")
 TRACKER_NAME = "pressure_conditioned_flow"
 
-# Formal runtime input: four original SEVIRI frames and four independent
-# original OCA products. No tracking-input bundle is read.
+# Four SEVIRI frames and their matching OCA products.
 DATA_CASE_DIR = PROJECT_ROOT / "data" / CASE_NAME.removeprefix("test_")
 OCA_TOLERANCE_MINUTES = 7.5
 
@@ -49,12 +40,7 @@ SAVE_COMPONENT_NPZ = False
 SAVE_OCA_PRESSURE_PRODUCT = True
 INCLUDE_STANDARD_ATMOSPHERE_HEIGHT = False
 
-# None lets the native loader search repository defaults and the legacy working
-# installation. An explicit example is:
-# PRIVATE_OPENCV_INSTALL_DIR = (
-#     PROJECT_ROOT
-#     / "_third_party/opencv_install_baseline"
-# )
+# None uses the native loader's environment and repository search paths.
 PRIVATE_OPENCV_INSTALL_DIR = None
 
 # None retains the private OpenCV default thread count.
@@ -85,7 +71,7 @@ from tracking.pressure_conditioned_flow import (  # noqa: E402
 
 
 # -----------------------------------------------------------------------------
-# Exact validated configuration
+# Solver configuration
 # -----------------------------------------------------------------------------
 
 LAYER_CONFIG = default_pressure_layer_config()

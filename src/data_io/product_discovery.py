@@ -1,8 +1,6 @@
-# -*- coding: utf-8 -*-
 """Product discovery helpers for AMV case directories.
 
-This module only resolves local product file paths. It does not read product
-contents. Product readers remain in data_io.oca and data_io.official_amv.
+Resolve local product paths for data_io.oca and data_io.official_amv.
 
 Typical case directory layout
 -----------------------------

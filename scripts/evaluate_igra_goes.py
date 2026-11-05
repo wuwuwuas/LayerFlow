@@ -1,29 +1,7 @@
-# -*- coding: utf-8 -*-
-"""Fast AMV-vs-IGRA comparison -- GOES version (one satellite per run).
+"""Collocate GOES AMVs with IGRA radiosondes and report wind metrics.
 
-Same collocation method and settings as evaluate_igra_seviri.py (SEVIRI); only the
-inputs differ:
-- operational product: NOAA ABI Band-14 DMW (DQF == 0, 100-1000 hPa);
-- dense products: <tracker>_<sat>_<geometry>_final_amv_goes_pressure.npz;
-- AMV time: scan midpoint of the centre frame;
-- outputs: outputs/<GOES_CASE>/comparison/amv_vs_igra_<sat>/.
-
-Run from the project root, once per satellite (set SATELLITE):
-
-    python scripts/evaluate_igra_goes.py
-
-Original SEVIRI notes:
-
-This script is a compact py-version of the AMV-IGRA comparison notebook.
-It only computes collocations/metrics and saves ERA5-style 4-panel figures.
-
-Key changes compared with the older notebook:
-- case time is inferred from DATA_CASE_DIR;
-- IGRA raw archives are read from the global cache: data/igra;
-- official AMV file is auto-discovered from the case data directory;
-- point-level IGRA geometry caches are reused across trackers;
-- all-points and QC metrics share the same geometry cache.
-"""
+Read station archives from data/igra and reuse point-level collocation
+geometry across trackers and QI thresholds."""
 
 from __future__ import annotations
 

@@ -1,16 +1,8 @@
-#!/usr/bin/env python3
-"""Build the release pressure-conditioned native OpenCV module.
+"""Build the LayerFlow masked variational-refinement module.
 
-The custom AMV implementation is compiled directly from:
-
-    src/tracking/pressure_conditioned_flow/csrc/amv_vr_masked
-
-A clean upstream OpenCV 4.13.0 source tree is treated only as a third-party
-build dependency. It can be supplied with ``--opencv-source`` or fetched into
-``_third_party/opencv_source_4.13.0`` with ``--fetch-opencv``.
-
-Nothing is installed into /usr or the active conda environment.
-"""
+Compile src/tracking/pressure_conditioned_flow/csrc/amv_vr_masked against
+OpenCV 4.13.0. Supply --opencv-source or use --fetch-opencv to obtain the
+source under _third_party/. Build products remain under _third_party/."""
 
 from __future__ import annotations
 

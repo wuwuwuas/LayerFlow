@@ -1,10 +1,7 @@
-"""Pressure-layer image construction and layer-flow composition.
+"""Construct pressure-conditioned images and compose layer flows.
 
-This module is preprocessing for the layerwise tracker pipeline.  It does not
-run an optical-flow algorithm itself.  The layerwise runner calls a normal
-``tracking.run_xxx`` function on each conditioned layer image, then calls
-``merge_layer_flows`` to compose the full dense flow.
-"""
+The layerwise runner applies each tracker to conditioned image pairs and
+uses merge_layer_flows to assemble the dense output."""
 
 from __future__ import annotations
 

@@ -112,8 +112,7 @@ QI_REL_TOL = 0.03                                # with the height term; 0 = abs
 # the K_p component pressures (chi-square with K_p - 1 dof, cross-fitting, EB).
 HEIGHT_TERM = True
 # sigma_p^2 estimator: "local" = local method of moments, mean of S_p/(K_p - 1) over a
-# SIGMA_P_WINDOW_PX window (validated in QC_height_diag.py); "nn" = second network +
-# empirical Bayes (tested: weaker, the network cannot see the neighbourhood dispersion).
+# SIGMA_P_WINDOW_PX window; "nn" uses a second network and empirical Bayes.
 HEIGHT_SIGMA_MODE = "local"
 # Windows in km (sensor independent; converted with the sub-satellite pixel size,
 # SEVIRI 3 km -> 15 / 7 px, ABI 2 km -> 23 / 11 px).

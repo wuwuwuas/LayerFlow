@@ -1,14 +1,11 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""Evaluate G16/G18 GOES PCF products against ERA5.
+"""Evaluate GOES LayerFlow pressure-assigned AMVs against ERA5.
 
-Satellite viewpoints and geometry variants are reported separately.  No pooled
-G16+G18 row is produced.
-"""
+Report satellite viewpoints and geometry variants separately."""
 
 from __future__ import annotations
 
 import os
+import argparse
 
 import json
 from pathlib import Path
@@ -33,6 +30,7 @@ if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
 from validation.compare_era5 import save_era5_cache_npz  # noqa: E402
+from runtime_options import read_case_inputs  # noqa: E402
 from validation.compare_era5_goes import (  # noqa: E402
     build_goes_amv_vs_era5_table,
     compare_goes_amv_to_era5,
@@ -60,9 +58,28 @@ def _product_time(path: Path) -> pd.Timestamp:
     raise RuntimeError(f"Could not resolve observation time from {path}")
 
 
-def main() -> int:
-    case_dir = PROJECT_ROOT / "data" / CASE_NAME
-    output_dir = PROJECT_ROOT / "outputs" / CASE_NAME / "goes_pcf_vs_era5"
+def evaluation_options(argv: list[str] | None = None) -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--case", default=CASE_NAME, help="Retrieval output case name")
+    parser.add_argument("--data-dir", type=Path, help="Observation directory containing era5/<region>/")
+    parser.add_argument("--satellites", nargs="+", choices=["G16", "G18"], help="Satellites to evaluate; defaults to the retrieval selection")
+    parser.add_argument("--geometry-modes", nargs="+", choices=["surface", "cloud_height"], help="Geometry products to evaluate")
+    args = parser.parse_args(argv)
+    if not args.case or Path(args.case).name != args.case or any(c in args.case for c in '/\\') or args.case in {'.', '..'}:
+        parser.error("--case must be a single folder name")
+    record = read_case_inputs(PROJECT_ROOT, args.case)
+    args.data_dir = (args.data_dir or Path(record.get("data_dir", PROJECT_ROOT / "data" / args.case))).expanduser().resolve()
+    product_dir = PROJECT_ROOT / "outputs" / args.case / "pressure_assignment"
+    available = [sat for sat in SATELLITES if any(product_dir.glob(f"pressure_conditioned_flow_{sat.lower()}_*_final_amv_goes_pressure.npz"))]
+    args.satellites = args.satellites or record.get("satellites") or available or list(SATELLITES)
+    args.geometry_modes = args.geometry_modes or record.get("geometry_modes") or list(GEOMETRY_MODES)
+    return args
+
+
+def main(argv: list[str] | None = None) -> int:
+    args = evaluation_options(argv)
+    case_dir = args.data_dir
+    output_dir = PROJECT_ROOT / "outputs" / args.case / "goes_pcf_vs_era5"
     output_dir.mkdir(parents=True, exist_ok=True)
     regions = discover_goes_era5_regions(case_dir)
     metric_tables: list[pd.DataFrame] = []
@@ -71,21 +88,21 @@ def main() -> int:
     print("=" * 112)
     print("GOES PRESSURE-CONDITIONED FLOW VS ERA5")
     print("=" * 112)
-    print("case:", CASE_NAME)
-    print("satellites:", SATELLITES)
-    print("geometry modes:", GEOMETRY_MODES)
+    print("case:", args.case)
+    print("satellites:", args.satellites)
+    print("geometry modes:", args.geometry_modes)
     print("ERA5 evaluation pressure range is defined by downloaded levels")
     print("ERA5 regions:")
     for region in regions:
         print(" ", region.name, region.path)
 
-    for satellite in SATELLITES:
+    for satellite in args.satellites:
         tracker = TRACKER_TEMPLATE.format(satellite_lower=satellite.lower())
-        for geometry_mode in GEOMETRY_MODES:
+        for geometry_mode in args.geometry_modes:
             product = (
                 PROJECT_ROOT
                 / "outputs"
-                / CASE_NAME
+                / args.case
                 / "pressure_assignment"
                 / f"{tracker}_{geometry_mode}_final_amv_goes_pressure.npz"
             )

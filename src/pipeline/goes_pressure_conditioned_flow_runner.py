@@ -1,14 +1,8 @@
-"""GOES single-view orchestration for the existing PCF tracking algorithm.
+"""Retrieve centre-anchored GOES pressure-conditioned AMVs.
 
-The tracking implementation remains in ``tracking.pressure_conditioned_flow``.
-This runner only:
-
-1. loads the centre-anchored temporal definition;
-2. supplies separate solver and centre-output masks;
-3. runs the existing two-frame PCF twice (centre->previous, centre->next);
-4. converts the same pixel flows with surface and centre-CTH geometries;
-5. averages both temporal components, requiring both dense components.
-"""
+Estimate centre-to-previous and centre-to-next flow, convert pixel
+displacements using surface and cloud-height geometry, and combine both
+temporal components into pressure-assigned AMV products."""
 
 from __future__ import annotations
 
